@@ -15,7 +15,7 @@ import webbrowser
 ICON_SUPPORT = True  # Всегда включена поддержка иконок
 
 # Константы для системы обновлений
-CURRENT_VERSION = "1.1.0"
+CURRENT_VERSION = "1.1.1"
 UPDATE_CHECK_URL = "https://api.github.com/repos/milioners/CursoreLauncher/releases/latest"
 GITHUB_RELEASES_URL = "https://github.com/milioners/CursoreLauncher/releases"
 
@@ -2193,13 +2193,8 @@ class ModernProgramLauncher:
     
     def animate_search_results(self):
         """Анимация результатов поиска"""
-        # Получаем все плитки
-        tiles = [child for child in self.programs_grid.winfo_children() 
-                if isinstance(child, ctk.CTkFrame)]
-        
-        # Анимация появления с задержкой
-        for i, tile in enumerate(tiles):
-            self.root.after(i * 50, lambda t=tile, d=i: self.animate_tile_appearance(t, d))
+        # В StatisticsWindow нет плиток программ, поэтому этот метод не нужен
+        pass
 
     def check_updates(self):
         """Проверка обновлений"""
@@ -3033,13 +3028,13 @@ class StatisticsWindow:
                 color = f"#{int(45 * alpha):02x}{int(45 * alpha):02x}{int(45 * alpha):02x}"
                 tile_frame.configure(fg_color=color)
                 self.tile_animation_step += 1
-                self.root.after(20, animate_step)
+                self.window.after(20, animate_step)
             else:
                 # Финальный цвет
                 tile_frame.configure(fg_color="#2d2d2d")
         
         # Запускаем анимацию с задержкой
-        self.root.after(delay * 100, animate_step)
+        self.window.after(delay * 100, animate_step)
     
     def animate_button_hover(self, button, original_color, hover_color):
         """Анимация наведения на кнопку"""
@@ -3078,7 +3073,7 @@ class StatisticsWindow:
                 else:
                     tile_frame.configure(fg_color=original_color)  # Оригинальный
                 self.launch_animation_step += 1
-                self.root.after(150, animate_step)
+                self.window.after(150, animate_step)
             else:
                 # Возвращаем оригинальный цвет
                 tile_frame.configure(fg_color=original_color)
@@ -3088,13 +3083,8 @@ class StatisticsWindow:
     
     def animate_search_results(self):
         """Анимация результатов поиска"""
-        # Получаем все плитки
-        tiles = [child for child in self.programs_grid.winfo_children() 
-                if isinstance(child, ctk.CTkFrame)]
-        
-        # Анимация появления с задержкой
-        for i, tile in enumerate(tiles):
-            self.root.after(i * 50, lambda t=tile, d=i: self.animate_tile_appearance(t, d))
+        # В StatisticsWindow нет плиток программ, поэтому этот метод не нужен
+        pass
 
 class UpdateManager:
     def __init__(self, parent):
