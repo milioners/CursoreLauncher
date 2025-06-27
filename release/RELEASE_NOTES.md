@@ -1,10 +1,10 @@
-# Cursor Launcher v1.5.0
+# Cursor Launcher v1.6.0
 
 ## Что нового
 - Улучшения и исправления ошибок
 
 ## Установка
-1. Скачайте архив CursorLauncher-v1.5.0.zip
+1. Скачайте архив CursorLauncher-v1.6.0.zip
 2. Распакуйте в удобное место
 3. Запустите CursorLauncher.exe
 
