@@ -35,17 +35,17 @@ copy "CHANGELOG.md" "release\"
 REM Создание архива
 echo Создание архива...
 cd release
-powershell -Command "Compress-Archive -Path 'CursorLauncher.exe', 'README.md', 'USER_GUIDE.md', 'CHANGELOG.md' -DestinationPath 'CursorLauncher-v1.1.0.zip' -Force"
+powershell -Command "Compress-Archive -Path 'CursorLauncher.exe', 'README.md', 'USER_GUIDE.md', 'CHANGELOG.md' -DestinationPath 'CursorLauncher-v1.1.2.zip' -Force"
 cd ..
 
 echo ========================================
 echo Готово! Архив для релиза создан:
-echo release\CursorLauncher-v1.1.0.zip
+echo release\CursorLauncher-v1.1.2.zip
 echo ========================================
 echo.
 echo Следующие шаги:
 echo 1. Загрузите архив на GitHub в разделе Releases
-echo 2. Создайте новый релиз с тегом v1.1.0
+echo 2. Создайте новый релиз с тегом v1.1.2
 echo 3. Добавьте описание изменений
 echo.
 pause 

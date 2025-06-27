@@ -3,7 +3,7 @@
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
 param(
-    [string]$Version = "1.1.1"
+    [string]$Version = "1.1.2"
 )
 
 Write-Host "========================================" -ForegroundColor Green

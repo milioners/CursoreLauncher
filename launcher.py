@@ -11,11 +11,14 @@ from PIL import Image, ImageTk
 import re
 import webbrowser
 
+# Импорт системы плагинов
+from plugin_system import PluginManager
+
 # Добавляем импорты для работы с иконками
 ICON_SUPPORT = True  # Всегда включена поддержка иконок
 
 # Константы для системы обновлений
-CURRENT_VERSION = "1.1.1"
+CURRENT_VERSION = "1.2.0"
 UPDATE_CHECK_URL = "https://api.github.com/repos/milioners/CursoreLauncher/releases/latest"
 GITHUB_RELEASES_URL = "https://github.com/milioners/CursoreLauncher/releases"
 
@@ -1298,11 +1301,17 @@ class ModernProgramLauncher:
         self.search_var = tk.StringVar()
         self.search_var.trace("w", self.filter_programs)
         
+        # Инициализация системы плагинов
+        self.plugin_manager = PluginManager(self)
+        
         # Создание интерфейса
         self.create_widgets()
         
         # Запуск анимации загрузки
         self.loading_animation()
+        
+        # Инициализация плагинов
+        self.plugin_manager.initialize_plugins()
         
         # Запуск фонового отслеживания использования
         if self.settings.get('track_usage', True):
@@ -1567,6 +1576,20 @@ class ModernProgramLauncher:
             corner_radius=17
         )
         stats_button.pack(side="right", padx=5)
+        
+        # Кнопка управления плагинами
+        plugins_button = ctk.CTkButton(
+            right_footer,
+            text="🔌 Плагины",
+            command=self.show_plugins_manager,
+            font=ctk.CTkFont(size=12, weight="bold"),
+            height=35,
+            width=100,
+            fg_color="#9C27B0",
+            hover_color="#7B1FA2",
+            corner_radius=17
+        )
+        plugins_button.pack(side="right", padx=5)
         
         # Кнопка обновлений
         update_button = ctk.CTkButton(
@@ -1861,6 +1884,10 @@ class ModernProgramLauncher:
             if self.settings.get('track_usage', True):
                 self.record_program_launch(program)
             
+            # Уведомляем плагины о запуске программы
+            if hasattr(self, 'plugin_manager'):
+                self.plugin_manager.on_program_launched(program)
+            
             if self.settings.get('show_notifications', True):
                 messagebox.showinfo(
                     "Успех",
@@ -1873,9 +1900,176 @@ class ModernProgramLauncher:
                 f"Не удалось запустить программу: {str(e)} ❌"
             )
     
+    def add_program(self, program_data):
+        """Добавление программы"""
+        self.programs.append(program_data)
+        self.save_programs()
+        
+        # Уведомляем плагины о добавлении программы
+        if hasattr(self, 'plugin_manager'):
+            self.plugin_manager.on_program_added(program_data)
+        
+        # Обновляем интерфейс
+        self.update_program_cards()
+    
+    def remove_program(self, program):
+        """Удаление программы"""
+        if program in self.programs:
+            self.programs.remove(program)
+            self.save_programs()
+            
+            # Уведомляем плагины об удалении программы
+            if hasattr(self, 'plugin_manager'):
+                self.plugin_manager.on_program_removed(program)
+            
+            # Обновляем интерфейс
+            self.update_program_cards()
+    
+    def show_plugins_manager(self):
+        """Показать менеджер плагинов"""
+        if not hasattr(self, 'plugin_manager'):
+            messagebox.showerror("Ошибка", "Система плагинов не инициализирована!")
+            return
+        
+        # Создаем окно менеджера плагинов
+        plugins_window = ctk.CTkToplevel(self.root)
+        plugins_window.title("🔌 Менеджер плагинов")
+        plugins_window.geometry("600x500")
+        plugins_window.resizable(False, False)
+        
+        # Центрируем окно
+        plugins_window.update_idletasks()
+        width = plugins_window.winfo_width()
+        height = plugins_window.winfo_height()
+        x = (plugins_window.winfo_screenwidth() // 2) - (width // 2)
+        y = (plugins_window.winfo_screenheight() // 2) - (height // 2)
+        plugins_window.geometry(f"{width}x{height}+{x}+{y}")
+        
+        main_frame = ctk.CTkFrame(plugins_window)
+        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        title_label = ctk.CTkLabel(
+            main_frame,
+            text="🔌 Менеджер плагинов",
+            font=ctk.CTkFont(size=20, weight="bold")
+        )
+        title_label.pack(pady=10)
+        
+        # Прокручиваемая область для списка плагинов
+        scroll_frame = ctk.CTkScrollableFrame(main_frame)
+        scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        # Получаем информацию о всех плагинах
+        plugins_info = self.plugin_manager.get_all_plugins_info()
+        
+        for plugin_info in plugins_info:
+            plugin_frame = ctk.CTkFrame(scroll_frame)
+            plugin_frame.pack(fill="x", padx=10, pady=5)
+            
+            # Информация о плагине
+            info_frame = ctk.CTkFrame(plugin_frame, fg_color="transparent")
+            info_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+            
+            name_label = ctk.CTkLabel(
+                info_frame,
+                text=plugin_info['name'],
+                font=ctk.CTkFont(size=16, weight="bold")
+            )
+            name_label.pack(anchor="w")
+            
+            desc_label = ctk.CTkLabel(
+                info_frame,
+                text=plugin_info['description'],
+                font=ctk.CTkFont(size=12),
+                text_color="gray"
+            )
+            desc_label.pack(anchor="w")
+            
+            version_label = ctk.CTkLabel(
+                info_frame,
+                text=f"Версия: {plugin_info['version']} | Автор: {plugin_info['author']}",
+                font=ctk.CTkFont(size=10),
+                text_color="gray"
+            )
+            version_label.pack(anchor="w")
+            
+            # Кнопки управления
+            buttons_frame = ctk.CTkFrame(plugin_frame, fg_color="transparent")
+            buttons_frame.pack(side="right", padx=10, pady=10)
+            
+            if plugin_info['enabled']:
+                # Плагин включен
+                status_label = ctk.CTkLabel(
+                    buttons_frame,
+                    text="✅ Включен",
+                    font=ctk.CTkFont(size=12),
+                    text_color="green"
+                )
+                status_label.pack()
+                
+                disable_button = ctk.CTkButton(
+                    buttons_frame,
+                    text="❌ Отключить",
+                    command=lambda name=plugin_info['name']: self.disable_plugin(name, plugins_window)
+                )
+                disable_button.pack(pady=5)
+            else:
+                # Плагин отключен
+                status_label = ctk.CTkLabel(
+                    buttons_frame,
+                    text="❌ Отключен",
+                    font=ctk.CTkFont(size=12),
+                    text_color="red"
+                )
+                status_label.pack()
+                
+                enable_button = ctk.CTkButton(
+                    buttons_frame,
+                    text="✅ Включить",
+                    command=lambda name=plugin_info['name']: self.enable_plugin(name, plugins_window)
+                )
+                enable_button.pack(pady=5)
+        
+        # Кнопка обновления
+        refresh_button = ctk.CTkButton(
+            main_frame,
+            text="🔄 Обновить список",
+            command=lambda: self.refresh_plugins_list(plugins_window)
+        )
+        refresh_button.pack(pady=10)
+    
+    def enable_plugin(self, plugin_name: str, window=None):
+        """Включение плагина"""
+        if self.plugin_manager.enable_plugin(plugin_name):
+            messagebox.showinfo("Успех", f"Плагин '{plugin_name}' включен!")
+            if window:
+                window.destroy()
+                self.show_plugins_manager()
+        else:
+            messagebox.showerror("Ошибка", f"Не удалось включить плагин '{plugin_name}'")
+    
+    def disable_plugin(self, plugin_name: str, window=None):
+        """Отключение плагина"""
+        if self.plugin_manager.disable_plugin(plugin_name):
+            messagebox.showinfo("Успех", f"Плагин '{plugin_name}' отключен!")
+            if window:
+                window.destroy()
+                self.show_plugins_manager()
+        else:
+            messagebox.showerror("Ошибка", f"Не удалось отключить плагин '{plugin_name}'")
+    
+    def refresh_plugins_list(self, window):
+        """Обновление списка плагинов"""
+        window.destroy()
+        self.show_plugins_manager()
+    
     def run(self):
         """Запуск приложения"""
         self.root.mainloop()
+        
+        # Очистка плагинов при закрытии
+        if hasattr(self, 'plugin_manager'):
+            self.plugin_manager.cleanup()
 
     def get_program_icon(self, program):
         """Получение иконки программы"""
