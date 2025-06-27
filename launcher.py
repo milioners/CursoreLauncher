@@ -15,9 +15,9 @@ import webbrowser
 ICON_SUPPORT = True  # Всегда включена поддержка иконок
 
 # Константы для системы обновлений
-CURRENT_VERSION = "1.0.0"
-UPDATE_CHECK_URL = "https://api.github.com/repos/milioners/MyLauncher/releases/latest"
-GITHUB_RELEASES_URL = "https://github.com/milioners/MyLauncher/releases"
+CURRENT_VERSION = "1.1.0"
+UPDATE_CHECK_URL = "https://api.github.com/repos/milioners/CursoreLauncher/releases/latest"
+GITHUB_RELEASES_URL = "https://github.com/milioners/CursoreLauncher/releases"
 
 class AddProgramWindow:
     def __init__(self, parent, callback):
