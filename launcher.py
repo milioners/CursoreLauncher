@@ -18,7 +18,7 @@ from plugin_system import PluginManager
 ICON_SUPPORT = True  # Всегда включена поддержка иконок
 
 # Константы для системы обновлений
-CURRENT_VERSION = "1.2.0"
+CURRENT_VERSION = "1.2.1"
 UPDATE_CHECK_URL = "https://api.github.com/repos/milioners/CursoreLauncher/releases/latest"
 GITHUB_RELEASES_URL = "https://github.com/milioners/CursoreLauncher/releases"
 

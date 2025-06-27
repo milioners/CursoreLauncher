@@ -192,6 +192,7 @@ class ExportImportPlugin(MenuPluginInterface, EventPluginInterface):
                     program.get('date_added', '')
                 ])
     
+    
     def export_to_txt(self, filename: str):
         if not self.launcher or not hasattr(self.launcher, 'programs'):
             return

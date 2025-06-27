@@ -1,6 +1,5 @@
 {
   "enabled_plugins": [
-    "Quick Launch",
     "Export/Import"
   ]
-} 
+}
