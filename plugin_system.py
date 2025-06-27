@@ -141,9 +141,12 @@ class PluginManager:
             
             # Ищем класс плагина в модуле
             for name, obj in inspect.getmembers(module):
-                if (inspect.isclass(obj) and 
-                    issubclass(obj, PluginInterface) and 
-                    obj != PluginInterface):
+                if (
+                    inspect.isclass(obj)
+                    and issubclass(obj, PluginInterface)
+                    and obj is not PluginInterface
+                    and not inspect.isabstract(obj)
+                ):
                     return obj()
             
             print(f"Плагин {plugin_file} не содержит валидного класса плагина")

@@ -172,17 +172,17 @@ class ExportImportPlugin(MenuPluginInterface, EventPluginInterface):
             messagebox.showerror("Ошибка", f"Ошибка при экспорте: {str(e)}")
     
     def export_to_json(self, filename: str):
-        """Экспорт в JSON"""
+        if not self.launcher or not hasattr(self.launcher, 'programs'):
+            return
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(self.launcher.programs, f, ensure_ascii=False, indent=2)
     
     def export_to_csv(self, filename: str):
-        """Экспорт в CSV"""
+        if not self.launcher or not hasattr(self.launcher, 'programs'):
+            return
         with open(filename, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
-            # Заголовки
             writer.writerow(['Название', 'Путь', 'Описание', 'Категория', 'Дата добавления'])
-            # Данные
             for program in self.launcher.programs:
                 writer.writerow([
                     program.get('name', ''),
@@ -193,7 +193,8 @@ class ExportImportPlugin(MenuPluginInterface, EventPluginInterface):
                 ])
     
     def export_to_txt(self, filename: str):
-        """Экспорт в TXT"""
+        if not self.launcher or not hasattr(self.launcher, 'programs'):
+            return
         with open(filename, 'w', encoding='utf-8') as f:
             for program in self.launcher.programs:
                 f.write(f"Название: {program.get('name', '')}\n")
@@ -247,23 +248,20 @@ class ExportImportPlugin(MenuPluginInterface, EventPluginInterface):
             messagebox.showerror("Ошибка", f"Ошибка при импорте: {str(e)}")
     
     def import_from_json(self, filename: str):
-        """Импорт из JSON"""
+        if not self.launcher or not hasattr(self.launcher, 'programs'):
+            return
         with open(filename, 'r', encoding='utf-8') as f:
             imported_programs = json.load(f)
-        
-        # Добавляем программы, избегая дубликатов
         for program in imported_programs:
             if not any(p['name'] == program['name'] for p in self.launcher.programs):
                 self.launcher.programs.append(program)
-        
-        # Сохраняем обновленный список
         if hasattr(self.launcher, 'save_programs'):
             self.launcher.save_programs()
     
     def import_from_csv(self, filename: str):
-        """Импорт из CSV"""
+        if not self.launcher or not hasattr(self.launcher, 'programs'):
+            return
         imported_programs = []
-        
         with open(filename, 'r', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
@@ -275,13 +273,9 @@ class ExportImportPlugin(MenuPluginInterface, EventPluginInterface):
                     'date_added': row.get('Дата добавления', '')
                 }
                 imported_programs.append(program)
-        
-        # Добавляем программы, избегая дубликатов
         for program in imported_programs:
             if not any(p['name'] == program['name'] for p in self.launcher.programs):
                 self.launcher.programs.append(program)
-        
-        # Сохраняем обновленный список
         if hasattr(self.launcher, 'save_programs'):
             self.launcher.save_programs()
     
@@ -291,28 +285,19 @@ class ExportImportPlugin(MenuPluginInterface, EventPluginInterface):
         messagebox.showinfo("Информация", "Импорт из TXT файлов пока не поддерживается")
     
     def create_backup(self):
-        """Создание резервной копии"""
         if not self.launcher or not hasattr(self.launcher, 'programs'):
             messagebox.showerror("Ошибка", "Не удалось создать резервную копию!")
             return
-        
-        # Создаем папку для резервных копий
         backup_dir = "backups"
         if not os.path.exists(backup_dir):
             os.makedirs(backup_dir)
-        
-        # Имя файла с датой
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_filename = os.path.join(backup_dir, f"programs_backup_{timestamp}.json")
-        
         try:
-            # Создаем резервную копию
             with open(backup_filename, 'w', encoding='utf-8') as f:
                 json.dump(self.launcher.programs, f, ensure_ascii=False, indent=2)
-            
             messagebox.showinfo("Успех", f"Резервная копия создана: {backup_filename}")
-            
         except Exception as e:
             messagebox.showerror("Ошибка", f"Ошибка при создании резервной копии: {str(e)}")
     
