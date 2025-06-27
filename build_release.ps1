@@ -1,3 +1,7 @@
+# Установка кодировки UTF-8 для корректного отображения русского текста
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
 param(
     [string]$Version = "1.1.1"
 )
