@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Discord",
+    "path": "C:/Users/Artem.DESKTOP-INOVHJ5/AppData/Local/Discord/Update.exe",
+    "description": "",
+    "category": "Общие",
+    "date_added": "2025-06-26 19:30:37"
+  },
+  {
+    "name": "War Thunder",
+    "path": "E:/WarThunder/launcher.exe",
+    "description": "",
+    "category": "Общие",
+    "date_added": "2025-06-26 19:54:31"
+  },
+  {
+    "name": "Steam",
+    "path": "D:/steam/steam.exe",
+    "description": "",
+    "category": "Общие",
+    "date_added": "2025-06-26 20:41:01"
+  }
+]
