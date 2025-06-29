@@ -1,20 +1,24 @@
-# 📋 История изменений
+# Changelog
 
-## [1.11.6] - 29.06.2025
+Все значимые изменения в проекте документируются в этом файле.
 
-### ✨ Исправления
+Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
+и проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
-Исправлена ошибка с языком
-Проверка
 
-## Support
+## [﻿1.11.9] - 2025-06-29
 
-For questions about specific releases or migration assistance:
+### 📝 Прочие изменения
+- Create QUICK_START.md
+- Create programs.json
+- Create launcher.ico
+- Update CHANGELOG.md
 
-- **GitHub Issues**: https://github.com/milioners/CursoreLauncher/issues
-- **GitHub Discussions**: https://github.com/milioners/CursoreLauncher/discussions
-- **Documentation**: https://github.com/milioners/CursoreLauncher/wiki
+## [﻿1.11.9] - 2025-06-29
 
-## License
+### 📝 Прочие изменения
+- Create QUICK_START.md
+- Create programs.json
+- Create launcher.ico
+- Update CHANGELOG.md
 
-This changelog is part of CursorLauncher and is licensed under the same terms as the project. 
